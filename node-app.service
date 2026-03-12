@@ -1,0 +1,14 @@
+[Unit]
+Description=Node.js App
+After=network.target
+
+[Service]
+Type=simple
+User=adminuser
+WorkingDirectory=/home/adminuser/node-app
+ExecStart=/usr/bin/node app.js
+Restart=always
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

@@ -9,3 +9,9 @@ variable "admin_username" {
   type        = string
   default     = "adminuser"
 }
+
+variable "storage_key" {
+  description = "Clé d'accès au compte de stockage"
+  type        = string
+  sensitive   = true
+}
