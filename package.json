@@ -1,0 +1,12 @@
+{
+  "name": "azure-node-app",
+  "version": "1.0.0",
+  "description": "Application Node.js pour TP Cloud Computing",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
