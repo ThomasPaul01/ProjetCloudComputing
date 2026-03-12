@@ -12,6 +12,7 @@ package-lock.json
 # Sensitive data
 *.pem
 *.key
+.env
 
 # OS
 .DS_Store

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Azure Storage App</title>
+</head>
+<body>
+  <h1>Application Node.js sur Azure</h1>
+  
+  <h2>Upload un fichier</h2>
+  <select id="uploadContainer">
+    <option value="images">images</option>
+    <option value="logs">logs</option>
+    <option value="files">files</option>
+  </select>
+  <input type="file" id="fileInput">
+  <button onclick="uploadFile()">Upload</button>
+  <div id="result"></div>
+  <h2>Liste des fichiers</h2>
+  <select id="listContainer">
+    <option value="images">images</option>
+    <option value="logs">logs</option>
+    <option value="files">files</option>
+  </select>
+  <button onclick="listFiles()">Lister</button>
+  <div id="fileList"></div>
+
+
+
+  <script>
+    async function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      const container = document.getElementById('uploadContainer').value;
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        alert('Selectionnez un fichier');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload/' + container, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        if (response.ok) {
+          document.getElementById('result').innerHTML = 
+            data.message + ' - ' + data.filename + ' (' + data.size + ' bytes)';
+          fileInput.value = '';
+          listFiles();
+        } else {
+          document.getElementById('result').innerHTML = 'Erreur: ' + data.error;
+        }
+      } catch (error) {
+        document.getElementById('result').innerHTML = 'Erreur: ' + error.message;
+      }
+    }
+
+    async function listFiles() {
+      const container = document.getElementById('listContainer').value;
+      try {
+        const response = await fetch('/api/files/' + container);
+        const data = await response.json();
+        let html = '<h3>Fichiers dans "' + data.container + '":</h3>';
+        if (data.files.length === 0) {
+          html += '<p>Aucun fichier</p>';
+        } else {
+          data.files.forEach(file => {
+            html += '<p>' + file.name + ' - ' + file.size + ' bytes<br>';
+            html += '<a href="/api/download/' + container + '/' + file.name + '">Telecharger</a> | ';
+            html += '<a href="#" onclick="deleteFile(&quot;'+container+'&quot;,&quot;'+file.name+'&quot;); return false;">Supprimer</a></p>';
+          });
+        }
+        document.getElementById('fileList').innerHTML = html;
+      } catch (error) {
+        document.getElementById('fileList').innerHTML = 'Erreur: ' + error.message;
+      }
+    }
+
+    async function deleteFile(container, filename) {
+      if (!confirm('Supprimer ' + filename + ' ?')) return;
+      try {
+        const response = await fetch('/api/delete/' + container + '/' + filename, {
+          method: 'DELETE'
+        });
+        const data = await response.json();
+        document.getElementById('result').innerHTML = data.message;
+        listFiles();
+      } catch (error) {
+        document.getElementById('result').innerHTML = 'Erreur: ' + error.message;
+      }
+    }
+
+    window.onload = () => listFiles();
+  </script>
+</body>
+</html>
