@@ -1,4 +1,3 @@
-# Générer un suffixe aléatoire pour le nom du stockage
 resource "random_string" "suffix" {
   length  = 6
   special = false
@@ -83,7 +82,7 @@ resource "azurerm_ssh_public_key" "main" {
   name                = "node-ssh-key"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  public_key          = file("~/.ssh/id_ed25519.pub")
+  public_key          = file(var.ssh_key_path)
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {

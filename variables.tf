@@ -15,3 +15,9 @@ variable "storage_key" {
   type        = string
   sensitive   = true
 }
+
+variable "ssh_key_path" {
+  description = "Chemin vers la clé SSH publique"
+  type        = string
+  default     = "~/.ssh/id_ed25519.pub"
+}
